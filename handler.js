@@ -11,9 +11,7 @@ exports.main = (options, cb) => {
   const {cmd, src, dst} = options
 
   if (!SUPPORTED_COMMANDS[cmd]) {
-    const err = new Error(`Unsupported command: ${cmd}`)
-    console.error(err.message)
-    cb(err)
+    cb(new Error(`Unsupported command: ${cmd}`))
     return
   }
 
@@ -25,13 +23,9 @@ exports.main = (options, cb) => {
       const startedAt = Date.now()
 
       fcmd.on('start', () => console.log(`Video processing started`))
-        .on('error', (err, stdout, stderr) => {
-          console.error(`Video processing error: ${err.message}`)
-          cb(err)
-        })
+        .on('error', (err, stdout, stderr) => cb(err, {stdout, stderr}))
         .on('end', (stdout, stderr) => {
-          console.log(`Video processing finished in ${Date.now() - startedAt} msec`)
-          cb()
+          cb(null, {stdout, stderr, duration: Date.now() - startedAt})
         })
 
       switch (cmd) {

@@ -8,6 +8,12 @@ const options = {
   dst: process.argv[4],
 }
 
-main(options, (err) => {
-  process.exit(err ? 1 : 0)
+main(options, (err, data) => {
+  if (err) {
+    console.error(`Video processing error: ${err.message}`)
+    process.exit(1)
+  }
+
+  console.log(`Video processing finished in ${data.duration} msec`)
+  process.exit(0)
 })
