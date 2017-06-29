@@ -23,7 +23,6 @@ exports.main = (options, cb) => {
     (cb) => fcmd.ffprobe(cb),
     (videoMetadata, cb) => {
       const startedAt = Date.now()
-      const batchNumber = '' + startedAt
 
       fcmd.on('start', () => console.log(`Video processing started`))
         .on('error', (err, stdout, stderr) => {
@@ -35,21 +34,21 @@ exports.main = (options, cb) => {
           cb()
         })
 
-        switch (cmd) {
-          case 'thumbnails':
-            fcmd.thumbnails({
-              count: Math.floor(videoMetadata.format.duration),
-              folder: dst,
-              filename: batchNumber + '-from-%b-%00i.png',
-              size: '50%'
-            })
-            break
-          case 'reduce':
-            fcmd.size('50%').output(dst).run()
-            break
-          default:
-            break
-        }
+      switch (cmd) {
+        case 'thumbnails':
+          fcmd.thumbnails({
+            count: Math.floor(videoMetadata.format.duration),
+            folder: dst,
+            filename: `${startedAt}-from-%b-%00i.png`,
+            size: '50%'
+          })
+          break
+        case 'reduce':
+          fcmd.size('50%').output(dst).run()
+          break
+        default:
+          break
+      }
     }
   ], cb)
 }
