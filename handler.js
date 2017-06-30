@@ -28,21 +28,29 @@ exports.main = (options, cb) => {
           cb(null, {stdout, stderr, duration: Date.now() - startedAt})
         })
 
-      switch (cmd) {
-        case 'thumbnails':
-          fcmd.thumbnails({
-            count: Math.floor(videoMetadata.format.duration),
-            folder: dst,
-            filename: `${startedAt}-from-%b-%00i.png`,
-            size: '50%'
-          })
-          break
-        case 'reduce':
-          fcmd.size('50%').output(dst).run()
-          break
-        default:
-          break
-      }
+      exports._handleCommand(fcmd, {
+        cmd, dst, size: '50%', duration: videoMetadata.format.duration
+      })
     }
   ], cb)
+}
+
+exports._handleCommand = (fcmd, options) => {
+  const {cmd, dst, size} = options
+
+  switch (cmd) {
+    case 'thumbnails':
+      fcmd.thumbnails({
+        count: Math.floor(options.duration),
+        folder: dst,
+        filename: `${Date.now()}-from-%b-%00i.png`,
+        size
+      })
+      break
+    case 'reduce':
+      fcmd.size(size).output(dst).run()
+      break
+    default:
+      break
+  }
 }
